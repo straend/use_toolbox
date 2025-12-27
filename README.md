@@ -95,14 +95,14 @@ direnv allow
 
 💡 How it Works
 
-  Infrastructure as Code: Your project's system dependencies are tracked in Git via .toolbox-packages.
+  Infrastructure as Code: Your project's system dependencies are tracked in Git via `.toolbox-packages.`
 
-  Smart Provisioning: It uses a "sentinel" file in .direnv/ to compare timestamps. It only runs dnf install if you actually change the package list.
+  Smart Provisioning: It uses a "sentinel" file in `.direnv/` to compare timestamps. It only runs `dnf install` if you actually change the package list.
 
-  No Nested Shells: It uses exec to replace the host shell process, preventing a messy stack of "shells inside shells."
+  No Nested Shells: It uses `exec` to replace the host shell process, preventing a messy stack of "shells inside shells."
 
 ⚠️ Known Limitations
 
-  Exiting: Since the script uses exec, typing exit will close the current terminal tab/window.
+  Exiting: Since the script uses `exec`, typing `exit` will close the current terminal tab/window.
 
-  Home Directory: Since Toolboxes share your $HOME, the if command -v direnv check in your .bashrc prevents errors inside the container where direnv might not be installed.
+  Home Directory: Since Toolboxes share your `$HOME`, the `if command -v direnv` check in your `.bashrc` prevents errors inside the container where direnv might not be installed.
