@@ -1,0 +1,33 @@
+# ~/.config/direnv/direnvrc
+
+use_toolbox() {
+  local container_name=$1
+  local pkg_file=".toolbox-packages"
+  local sentinel=".direnv/toolbox-timestamp"
+
+  # 1. CREATE: Check if the container exists
+  if ! toolbox list --containers | grep -q "\b${container_name}\b"; then
+    echo "▶ Container '$container_name' not found. Creating..."
+    toolbox create -c "$container_name" -y
+  fi
+
+  # 2. PROVISION: Sync packages if .toolbox-packages is newer than sentinel
+  if [ -f "$pkg_file" ]; then
+    if [ ! -f "$sentinel" ] || [ "$pkg_file" -nt "$sentinel" ]; then
+      echo "▶ Syncing packages in '$container_name'..."
+      local pkgs=$(grep -v '^#' "$pkg_file" | xargs)
+      
+      if [ -n "$pkgs" ]; then
+        # This uses the container's internal DNF to install packages
+        toolbox run -c "$container_name" sudo dnf install -y $pkgs
+      fi
+
+      mkdir -p .direnv && touch "$sentinel"
+    fi
+  fi
+
+  # 3. ENTER: Swap host shell for toolbox shell
+  if [ -z "$TOOLBOX_PATH" ]; then
+    exec toolbox enter "$container_name"
+  fi
+}
